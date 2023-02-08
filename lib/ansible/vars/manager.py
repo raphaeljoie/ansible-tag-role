@@ -477,6 +477,9 @@ class VariableManager:
 
             variables['ansible_play_name'] = play.get_name()
 
+            # TODO create a new variables: ansible_play_skip_tags, ansible_play_only_tags
+            variables['blabetiblou'] = play.default_only_tags or 'coucou'
+
         if task:
             if task._role:
                 variables['role_name'] = task._role.get_name(include_role_fqcn=False)

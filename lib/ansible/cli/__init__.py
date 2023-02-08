@@ -414,7 +414,9 @@ class CLI(ABC):
             # More specifically, we want `--tags` to be additive. So we cannot
             # simply change C.TAGS_RUN's default to ["all"] because then passing
             # --tags foo would cause us to have ['all', 'foo']
-            options.tags = ['all']
+            # TODO we're trying to find a way to be backward compatible for {{ ansible_run_tags }}
+            options.tags = None
+
         if hasattr(options, 'tags') and options.tags:
             tags = set()
             for tag_set in options.tags:

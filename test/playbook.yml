@@ -1,0 +1,73 @@
+# docker run --name ansible-tag-role -di -v $(pwd):/ansible python:3.10-bullseye
+# docker exec -it ansible-tag-role /bin/bash
+# > cd /ansible
+# > source ./hacking/env-setup
+# > python3 -m pip install --force-reinstall --user -r ./requirements.txt
+# > ansible-playbook test/playbook.yml
+# > ansible-playbook test/playbook.yml --tags testOnly
+# > ansible-playbook test/playbook.yml --skip_tags testSkip
+
+# TODO test how it works with roles + included playbooks
+- name: testOnly
+  hosts: localhost
+  gather_facts: no
+  default_only_tags:
+    - testOnly
+  tasks:
+    - ansible.builtin.debug:
+        msg: "{{ blabetiblou }} This task is tagged #testOnly, and playbook is running with tags: {{ ansible_run_tags }}, and skip {{ ansible_skip_tags }}"
+      tags:
+        - testOnly
+    - ansible.builtin.debug:
+        msg: "{{ blabetiblou }} This task is tagged #testOnly #testSkip, and playbook is running with tags: {{ ansible_run_tags }}, and skip {{ ansible_skip_tags }}"
+      tags:
+        - testOnly
+        - testSkip
+    - ansible.builtin.debug:
+        msg: "{{ blabetiblou }} This task is tagged #testSkip, and playbook is running with tags: {{ ansible_run_tags }}, and skip {{ ansible_skip_tags }}"
+      tags:
+        - testSkip
+    - ansible.builtin.debug:
+        msg: "{{ blabetiblou }} This task is not tagged, and playbook is running with tags: {{ ansible_run_tags }}, and skip {{ ansible_skip_tags }}"
+
+- name: testSkip
+  hosts: localhost
+  gather_facts: no
+  default_skip_tags:
+    - testSkip
+  tasks:
+    - ansible.builtin.debug:
+        msg: "This task is tagged #testOnly, and playbook is running with tags: {{ ansible_run_tags }}, and skip {{ ansible_skip_tags }}"
+      tags:
+        - testOnly
+    - ansible.builtin.debug:
+        msg: "This task is tagged #testOnly #testSkip, and playbook is running with tags: {{ ansible_run_tags }}, and skip {{ ansible_skip_tags }}"
+      tags:
+        - testOnly
+        - testSkip
+    - ansible.builtin.debug:
+        msg: "This task is tagged #testSkip, and playbook is running with tags: {{ ansible_run_tags }}, and skip {{ ansible_skip_tags }}"
+      tags:
+        - testSkip
+    - ansible.builtin.debug:
+        msg: "This task is not tagged, and playbook is running with tags: {{ ansible_run_tags }}, and skip {{ ansible_skip_tags }}"
+
+- name: test
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - ansible.builtin.debug:
+        msg: "This task is tagged #testOnly, and playbook is running with tags: {{ ansible_run_tags }}, and skip {{ ansible_skip_tags }}"
+      tags:
+        - testOnly
+    - ansible.builtin.debug:
+        msg: "This task is tagged #testOnly #testSkip, and playbook is running with tags: {{ ansible_run_tags }}, and skip {{ ansible_skip_tags }}"
+      tags:
+        - testOnly
+        - testSkip
+    - ansible.builtin.debug:
+        msg: "This task is tagged #testSkip, and playbook is running with tags: {{ ansible_run_tags }}, and skip {{ ansible_skip_tags }}"
+      tags:
+        - testSkip
+    - ansible.builtin.debug:
+        msg: "This task is not tagged, and playbook is running with tags: {{ ansible_run_tags }}, and skip {{ ansible_skip_tags }}"

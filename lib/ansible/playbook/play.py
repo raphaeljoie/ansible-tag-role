@@ -85,6 +85,10 @@ class Play(Base, Taggable, CollectionSearch):
     strategy = FieldAttribute(isa='string', default=C.DEFAULT_STRATEGY, always_post_validate=True)
     order = FieldAttribute(isa='string', always_post_validate=True)
 
+    # TODO maybe take only_tags and skip_tags instead of default_* as name
+    default_only_tags = FieldAttribute(isa='list', default=list, priority=99)
+    default_skip_tags = FieldAttribute(isa='list', default=list, priority=99)
+
     # =================================================================================
 
     def __init__(self):
@@ -95,8 +99,8 @@ class Play(Base, Taggable, CollectionSearch):
         self._removed_hosts = []
         self.role_cache = {}
 
-        self.only_tags = set(context.CLIARGS.get('tags', [])) or frozenset(('all',))
-        self.skip_tags = set(context.CLIARGS.get('skip_tags', []))
+        #self.only_tags = set(context.CLIARGS.get('tags', [])) or frozenset(('all',))
+        #self.skip_tags = set(context.CLIARGS.get('skip_tags', []))
 
         self._action_groups = {}
         self._group_actions = {}
@@ -136,6 +140,32 @@ class Play(Base, Taggable, CollectionSearch):
 
             elif not isinstance(value, (binary_type, text_type)):
                 raise AnsibleParserError("Hosts list must be a sequence or string. Please check your playbook.")
+
+    def get_skip_tags(self):
+        ''' return the name of the Play '''
+
+        # TODO caching
+
+        if context.CLIARGS.get('skip_tags'):
+            return context.CLIARGS.get('skip_tags')
+
+        if self.default_skip_tags:
+            return self.default_skip_tags
+
+        return []
+
+    def get_only_tags(self):
+        ''' return the name of the Play '''
+
+        # TODO caching
+
+        if context.CLIARGS.get('tags'):
+            return context.CLIARGS.get('tags')
+
+        if self.default_only_tags:
+            return self.default_only_tags
+
+        return frozenset(('all',))
 
     def get_name(self):
         ''' return the name of the Play '''
