@@ -71,3 +71,19 @@
         - testSkip
     - ansible.builtin.debug:
         msg: "This task is not tagged, and playbook is running with CLI tags ({{ ansible_run_tags }} - {{ ansible_skip_tags }}), and play tags ({{ ansible_play_only_tags }} - {{ ansible_play_skip_tags }})"
+
+- name: testOnlyRole
+  hosts: localhost
+  gather_facts: no
+  only_tags:
+    - testOnly
+  roles:
+    - test-role
+
+- name: testSkipRole
+  hosts: localhost
+  gather_facts: no
+  skip_tags:
+    - testSkip
+  roles:
+    - test-role
