@@ -384,11 +384,11 @@ class Block(Base, Conditional, CollectionSearch, Taggable):
                         (task.action in C._ACTION_INCLUDE and
                          task.evaluate_tags(
                              [],
-                             self._play.get_skip_tags(role_params.get('skip_tags')),
+                             self._play.eval_skip_tags(role_params.get('skip_tags')),
                              all_vars=all_vars)) or
                         task.evaluate_tags(
-                            self._play.get_only_tags(role_params.get('only_tags')),
-                            self._play.get_skip_tags(role_params.get('skip_tags')),
+                            self._play.eval_only_tags(role_params.get('only_tags')),
+                            self._play.eval_skip_tags(role_params.get('skip_tags')),
                             all_vars=all_vars)):
                     tmp_list.append(task)
             return tmp_list

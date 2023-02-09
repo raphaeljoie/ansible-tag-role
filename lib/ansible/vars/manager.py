@@ -477,7 +477,6 @@ class VariableManager:
 
             variables['ansible_play_name'] = play.get_name()
 
-            # TODO freeze
             variables['ansible_play_skip_tags'] = play.get_skip_tags() or []
             variables['ansible_play_only_tags'] = play.get_only_tags() or []
 

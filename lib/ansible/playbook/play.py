@@ -137,27 +137,40 @@ class Play(Base, Taggable, CollectionSearch):
             elif not isinstance(value, (binary_type, text_type)):
                 raise AnsibleParserError("Hosts list must be a sequence or string. Please check your playbook.")
 
-    def get_skip_tags(self, block_skip_tags=None):
-        """ return tags to be skipped, from CLI if any, from play `skip_tags` param otherwise"""
+    def get_skip_tags(self):
+        ''' return a copy of Play skip_tags if any '''
+        if self.skip_tags:
+            return self.skip_tags.copy()
 
-        # TODO caching
+    def eval_skip_tags(self, block_skip_tags=None):
+        '''
+        evaluate and return tags to be skipped, from CLI if any, from block definition if provided
+        from play `skip_tags` param otherwise
+        '''
+
         cli_skip_tags = context.CLIARGS.get('skip_tags')
         if cli_skip_tags and len(cli_skip_tags) > 0:
             # if len === 0, CLI skip tags are default value
             return cli_skip_tags
 
         if block_skip_tags is not None:
-            return block_skip_tags.copy()
+            return block_skip_tags
 
         if self.skip_tags:
-            return self.skip_tags.copy()
+            return self.skip_tags
 
         return []
 
-    def get_only_tags(self, block_only_tags=None):
-        """ return tags to be selected, from CLI if any, from play `only_tags` param otherwise"""
+    def get_only_tags(self):
+        ''' return a copy of Play only_tags if any '''
+        if self.only_tags:
+            return self.only_tags.copy()
 
-        # TODO caching
+    def eval_only_tags(self, block_only_tags=None):
+        '''
+        evaluate and return tags to be selected, from CLI if any, from block definition if provided
+        from play `skip_tags` param otherwise
+        '''
 
         cli_tags = context.CLIARGS.get('tags')
         if cli_tags and len(cli_tags) > 0 and not isinstance(cli_tags[0], DefaultTag):
@@ -165,10 +178,10 @@ class Play(Base, Taggable, CollectionSearch):
             return cli_tags
 
         if block_only_tags is not None:
-            return block_only_tags.copy()
+            return block_only_tags
 
         if self.only_tags:
-            return self.only_tags.copy()
+            return self.only_tags
 
         return []
 
