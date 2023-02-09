@@ -416,7 +416,7 @@ class CLI(ABC):
             # simply change C.TAGS_RUN's default to ["all"] because then passing
             # --tags foo would cause us to have ['all', 'foo']
             options.tags = [DefaultTag('all')]
-        if hasattr(options, 'tags') and options.tags:
+        elif hasattr(options, 'tags') and options.tags:
             tags = set()
             for tag_set in options.tags:
                 for tag in tag_set.split(u','):
