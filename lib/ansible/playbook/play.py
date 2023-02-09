@@ -32,7 +32,7 @@ from ansible.playbook.collectionsearch import CollectionSearch
 from ansible.playbook.helpers import load_list_of_blocks, load_list_of_roles
 from ansible.playbook.role import Role, hash_params
 from ansible.playbook.task import Task
-from ansible.playbook.taggable import Taggable
+from ansible.playbook.taggable import Taggable, DefaultTag
 from ansible.vars.manager import preprocess_vars
 from ansible.utils.display import Display
 
@@ -85,9 +85,8 @@ class Play(Base, Taggable, CollectionSearch):
     strategy = FieldAttribute(isa='string', default=C.DEFAULT_STRATEGY, always_post_validate=True)
     order = FieldAttribute(isa='string', always_post_validate=True)
 
-    # TODO maybe take only_tags and skip_tags instead of default_* as name
-    default_only_tags = FieldAttribute(isa='list', default=list, priority=99)
-    default_skip_tags = FieldAttribute(isa='list', default=list, priority=99)
+    only_tags = FieldAttribute(isa='list', default=list, priority=99)
+    skip_tags = FieldAttribute(isa='list', default=list, priority=99)
 
     # =================================================================================
 
@@ -98,9 +97,6 @@ class Play(Base, Taggable, CollectionSearch):
         self._included_path = None
         self._removed_hosts = []
         self.role_cache = {}
-
-        #self.only_tags = set(context.CLIARGS.get('tags', [])) or frozenset(('all',))
-        #self.skip_tags = set(context.CLIARGS.get('skip_tags', []))
 
         self._action_groups = {}
         self._group_actions = {}
@@ -149,8 +145,8 @@ class Play(Base, Taggable, CollectionSearch):
         if context.CLIARGS.get('skip_tags'):
             return context.CLIARGS.get('skip_tags')
 
-        if self.default_skip_tags:
-            return self.default_skip_tags
+        if self.skip_tags:
+            return self.skip_tags.copy()
 
         return []
 
@@ -159,13 +155,15 @@ class Play(Base, Taggable, CollectionSearch):
 
         # TODO caching
 
-        if context.CLIARGS.get('tags'):
-            return context.CLIARGS.get('tags')
+        cli_tags = context.CLIARGS.get('tags')
+        if cli_tags and len(cli_tags) > 1 and not isinstance(cli_tags[0], DefaultTag):
+            # if len(cli_tags) and cli_tags[0] is DefaultTag => no explicit cli --tags parameter
+            return cli_tags
 
-        if self.default_only_tags:
-            return self.default_only_tags
+        if self.only_tags:
+            return self.only_tags.copy()
 
-        return frozenset(('all',))
+        return []
 
     def get_name(self):
         ''' return the name of the Play '''

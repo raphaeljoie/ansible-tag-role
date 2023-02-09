@@ -477,8 +477,9 @@ class VariableManager:
 
             variables['ansible_play_name'] = play.get_name()
 
-            # TODO create a new variables: ansible_play_skip_tags, ansible_play_only_tags
-            variables['blabetiblou'] = play.default_only_tags or 'coucou'
+            # TODO freeze
+            variables['ansible_play_skip_tags'] = play.get_skip_tags() or []
+            variables['ansible_play_only_tags'] = play.get_only_tags() or []
 
         if task:
             if task._role:

@@ -102,6 +102,7 @@ from ansible.module_utils.common.collections import is_sequence
 from ansible.module_utils.common.file import is_executable
 from ansible.parsing.dataloader import DataLoader
 from ansible.parsing.vault import PromptVaultSecret, get_file_vault_secret
+from ansible.playbook.taggable import DefaultTag
 from ansible.plugins.loader import add_all_plugin_dirs, init_plugin_loader
 from ansible.release import __version__
 from ansible.utils.collection_loader import AnsibleCollectionConfig
@@ -414,9 +415,7 @@ class CLI(ABC):
             # More specifically, we want `--tags` to be additive. So we cannot
             # simply change C.TAGS_RUN's default to ["all"] because then passing
             # --tags foo would cause us to have ['all', 'foo']
-            # TODO we're trying to find a way to be backward compatible for {{ ansible_run_tags }}
-            options.tags = None
-
+            options.tags = [DefaultTag('all')]
         if hasattr(options, 'tags') and options.tags:
             tags = set()
             for tag_set in options.tags:

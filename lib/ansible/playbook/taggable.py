@@ -25,6 +25,10 @@ from ansible.playbook.attribute import FieldAttribute
 from ansible.template import Templar
 
 
+class DefaultTag(str):
+    pass
+
+
 class Taggable:
 
     untagged = frozenset(['untagged'])

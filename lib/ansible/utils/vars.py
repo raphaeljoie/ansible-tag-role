@@ -231,11 +231,6 @@ def load_options_vars(version):
             opt = context.CLIARGS.get(attr)
             if opt is not None:
                 options_vars['ansible_%s' % alias] = opt
-            # TODO find a way to keep tags and skip_tags in CLIARGS
-            elif attr == 'tags':
-                options_vars['ansible_%s' % alias] = frozenset(['all'])
-            elif attr == 'skip_tags':
-                options_vars['ansible_%s' % alias] = []
 
         setattr(load_options_vars, 'options_vars', options_vars)
 
