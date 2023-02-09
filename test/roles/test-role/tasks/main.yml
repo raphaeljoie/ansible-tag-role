@@ -1,15 +1,15 @@
 - ansible.builtin.debug:
-    msg: "This task is tagged #testOnly, and playbook is running with CLI tags ({{ ansible_run_tags }} - {{ ansible_skip_tags }}), and play tags ({{ ansible_play_only_tags }} - {{ ansible_play_skip_tags }})"
+    msg: "This task is tagged #testOnly, and playbook is running with CLI tags ({{ ansible_run_tags }} - {{ ansible_skip_tags }}), role tags ({{ ansible_role_only_tags }} - {{ ansible_role_skip_tags }}), and play tags ({{ ansible_play_only_tags }} - {{ ansible_play_skip_tags }})"
   tags:
     - testOnly
 - ansible.builtin.debug:
-    msg: "This task is tagged #testOnly #testSkip, and playbook is running with CLI tags ({{ ansible_run_tags }} - {{ ansible_skip_tags }}), and play tags ({{ ansible_play_only_tags }} - {{ ansible_play_skip_tags }})"
+    msg: "This task is tagged #testOnly #testSkip, and playbook is running with CLI tags ({{ ansible_run_tags }} - {{ ansible_skip_tags }}), role tags ({{ ansible_role_only_tags }} - {{ ansible_role_skip_tags }}), and play tags ({{ ansible_play_only_tags }} - {{ ansible_play_skip_tags }})"
   tags:
     - testOnly
     - testSkip
 - ansible.builtin.debug:
-    msg: "This task is tagged #testSkip, and playbook is running with CLI tags ({{ ansible_run_tags }} - {{ ansible_skip_tags }}), and play tags ({{ ansible_play_only_tags }} - {{ ansible_play_skip_tags }})"
+    msg: "This task is tagged #testSkip, and playbook is running with CLI tags ({{ ansible_run_tags }} - {{ ansible_skip_tags }}), role tags ({{ ansible_role_only_tags }} - {{ ansible_role_skip_tags }}), and play tags ({{ ansible_play_only_tags }} - {{ ansible_play_skip_tags }})"
   tags:
     - testSkip
 - ansible.builtin.debug:
-    msg: "This task is not tagged, and playbook is running with CLI tags ({{ ansible_run_tags }} - {{ ansible_skip_tags }}), and play tags ({{ ansible_play_only_tags }} - {{ ansible_play_skip_tags }})"
+    msg: "This task is not tagged, and playbook is running with CLI tags ({{ ansible_run_tags }} - {{ ansible_skip_tags }}), role tags ({{ ansible_role_only_tags }} - {{ ansible_role_skip_tags }}), and play tags ({{ ansible_play_only_tags }} - {{ ansible_play_skip_tags }})"

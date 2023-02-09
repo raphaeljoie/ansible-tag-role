@@ -7,7 +7,6 @@
 # > ansible-playbook test/playbook.yml --tags testOnly
 # > ansible-playbook test/playbook.yml --skip_tags testSkip
 
-# TODO test how it works with roles + included playbooks
 - name: testOnly
   hosts: localhost
   gather_facts: no
@@ -87,3 +86,16 @@
     - testSkip
   roles:
     - test-role
+
+- name: testInRole
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - role: test-role
+    - role: test-role
+      only_tags: [testOnly]
+    - role: test-role
+      skip_tags: [ testSkip ]
+    - role: test-role
+      only_tags: [testOnly]
+      skip_tags: [ testSkip ]

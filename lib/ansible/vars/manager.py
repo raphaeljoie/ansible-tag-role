@@ -489,6 +489,10 @@ class VariableManager:
                 variables['ansible_collection_name'] = task._role._role_collection
                 variables['ansible_role_name'] = task._role.get_name()
 
+                role_params = (task._role.get_role_params()) or {}
+                variables['ansible_role_skip_tags'] = role_params.get('skip_tags') or []
+                variables['ansible_role_only_tags'] = role_params.get('only_tags') or []
+
         if self._inventory is not None:
             variables['groups'] = self._inventory.get_groups_dict()
             if play:

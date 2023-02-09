@@ -375,13 +375,21 @@ class Block(Base, Conditional, CollectionSearch, Taggable):
         def evaluate_and_append_task(target):
             tmp_list = []
             for task in target:
+                role_params = (self._role and self._role.get_role_params()) or {}
                 if isinstance(task, Block):
                     filtered_block = evaluate_block(task)
                     if filtered_block.has_tasks():
                         tmp_list.append(filtered_block)
                 elif ((task.action in C._ACTION_META and task.implicit) or
-                        (task.action in C._ACTION_INCLUDE and task.evaluate_tags([], self._play.skip_tags, all_vars=all_vars)) or
-                        task.evaluate_tags(self._play.get_only_tags(), self._play.get_skip_tags(), all_vars=all_vars)):
+                        (task.action in C._ACTION_INCLUDE and
+                         task.evaluate_tags(
+                             [],
+                             self._play.get_skip_tags(role_params.get('skip_tags')),
+                             all_vars=all_vars)) or
+                        task.evaluate_tags(
+                            self._play.get_only_tags(role_params.get('only_tags')),
+                            self._play.get_skip_tags(role_params.get('skip_tags')),
+                            all_vars=all_vars)):
                     tmp_list.append(task)
             return tmp_list
 

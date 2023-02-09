@@ -137,7 +137,7 @@ class Play(Base, Taggable, CollectionSearch):
             elif not isinstance(value, (binary_type, text_type)):
                 raise AnsibleParserError("Hosts list must be a sequence or string. Please check your playbook.")
 
-    def get_skip_tags(self):
+    def get_skip_tags(self, block_skip_tags=None):
         """ return tags to be skipped, from CLI if any, from play `skip_tags` param otherwise"""
 
         # TODO caching
@@ -146,12 +146,15 @@ class Play(Base, Taggable, CollectionSearch):
             # if len === 0, CLI skip tags are default value
             return cli_skip_tags
 
+        if block_skip_tags is not None:
+            return block_skip_tags.copy()
+
         if self.skip_tags:
             return self.skip_tags.copy()
 
         return []
 
-    def get_only_tags(self):
+    def get_only_tags(self, block_only_tags=None):
         """ return tags to be selected, from CLI if any, from play `only_tags` param otherwise"""
 
         # TODO caching
@@ -160,6 +163,9 @@ class Play(Base, Taggable, CollectionSearch):
         if cli_tags and len(cli_tags) > 0 and not isinstance(cli_tags[0], DefaultTag):
             # if len(cli_tags) and cli_tags[0] is DefaultTag => no explicit cli --tags parameter
             return cli_tags
+
+        if block_only_tags is not None:
+            return block_only_tags.copy()
 
         if self.only_tags:
             return self.only_tags.copy()
