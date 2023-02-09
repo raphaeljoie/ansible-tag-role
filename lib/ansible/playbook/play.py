@@ -142,46 +142,32 @@ class Play(Base, Taggable, CollectionSearch):
         if self.skip_tags:
             return self.skip_tags.copy()
 
-    def eval_skip_tags(self, block_skip_tags=None):
-        '''
-        evaluate and return tags to be skipped, from CLI if any, from block definition if provided
-        from play `skip_tags` param otherwise
-        '''
-
-        cli_skip_tags = context.CLIARGS.get('skip_tags')
-        if cli_skip_tags and len(cli_skip_tags) > 0:
-            # if len === 0, CLI skip tags are default value
-            return cli_skip_tags
-
-        if block_skip_tags is not None:
-            return block_skip_tags
-
-        if self.skip_tags:
-            return self.skip_tags
-
-        return []
-
     def get_only_tags(self):
         ''' return a copy of Play only_tags if any '''
         if self.only_tags:
             return self.only_tags.copy()
 
-    def eval_only_tags(self, block_only_tags=None):
+    def eval_tags(self, tags_type, block_tags=None):
         '''
-        evaluate and return tags to be selected, from CLI if any, from block definition if provided
-        from play `skip_tags` param otherwise
+        evaluate and return tags to be skipped or selected, from CLI if any, from block definition if provided
+        from play `skip_tags`/`only_tags` param otherwise
         '''
 
-        cli_tags = context.CLIARGS.get('tags')
-        if cli_tags and len(cli_tags) > 0 and not isinstance(cli_tags[0], DefaultTag):
-            # if len(cli_tags) and cli_tags[0] is DefaultTag => no explicit cli --tags parameter
-            return cli_tags
+        cli_tags = context.CLIARGS.get('skip_tags' if tags_type == 'skip' else 'tags')
+        if cli_tags and len(cli_tags) > 0:
+            if tags_type == 'skip':
+                # if len === 0, CLI skip tags are default value
+                return cli_tags
+            elif not isinstance(cli_tags[0], DefaultTag):
+                # if len(cli_tags) and cli_tags[0] is DefaultTag => no explicit cli --tags parameter
+                return cli_tags
 
-        if block_only_tags is not None:
-            return block_only_tags
+        if block_tags:
+            return block_tags
 
-        if self.only_tags:
-            return self.only_tags
+        play_tags = getattr(self, f'{tags_type}_tags')
+        if play_tags:
+            return play_tags
 
         return []
 
